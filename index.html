@@ -164,6 +164,7 @@
         alert("⚠️ No se pudo cargar la lista de asistentes");
         console.error(e);
       }
+      console.log("Cargando asistentes desde:", `${WEBAPP_URL}?accion=asistentes`)
     }
 
     document.getElementById("enviar").onclick = async () => {
@@ -235,6 +236,10 @@
       document.getElementById("acciones").style.display = "none";
       document.getElementById("imagen-carton").src = "";
     }
+
+    // Cargar asistentes al iniciar
+    window.onload = cargarAsistentes;
+    
   </script>
 </body>
 </html>
