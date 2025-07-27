@@ -26,6 +26,31 @@
       margin-bottom: 1.5rem;
     }
 
+    select {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      background-color: white;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 6.146a.5.5 0 0 1 .708 0L8 8.793l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+    }
+
+    label[for="asistente"] {
+      font-size: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #333;
+    }
+
+
     input,
     button {
       width: 100%;
@@ -115,8 +140,9 @@
 
   <h2>🎟️ Asignar Cartón</h2>
   
+  <label for="asistente" style="display: block; font-weight: bold; margin-bottom: 0.4rem;">👤 Asistente:</label>
   <select id="asistente">
-    <option disabled selected>Cargando asistentes...</option>
+  <option disabled selected>Cargando asistentes...</option>
   </select>
   
   <input id="cel" placeholder="Número de WhatsApp (ej. +573001112233)" />
