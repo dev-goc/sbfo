@@ -41,7 +41,7 @@
       background-position: right 1rem center;
       background-size: 1rem;
     }
-
+    
     label[for="asistente"] {
       font-size: 1rem;
       margin-top: 1rem;
@@ -49,8 +49,7 @@
       display: block;
       color: #333;
     }
-
-
+    
     input,
     button {
       width: 100%;
@@ -155,6 +154,7 @@
   </div>
 
   <div id="resultado">
+    <p><strong>👤 Asistente:</strong> <span id="asistente-nombre"></span></p>
     <p><strong>✅ Cartón asignado:</strong> <span id="carton-num"></span></p>
     <p><strong>📎 Link:</strong> <a id="carton-link" href="" target="_blank"></a></p>
     <img id="imagen-carton" src="" alt="Cartón asignado" />
@@ -235,6 +235,7 @@
         document.getElementById("carton-link").innerText = data.link;
         document.getElementById("carton-link").href = data.link;
         document.getElementById("imagen-carton").src = data.link;
+        document.getElementById("asistente-nombre").innerText = asistente;
         document.getElementById("resultado").style.display = "block";
         document.getElementById("acciones").style.display = "flex";
       
