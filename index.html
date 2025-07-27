@@ -1,53 +1,113 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Asignar Cartón de Bingo</title>
   <style>
+    :root {
+      --azul: #1a73e8;
+      --gris-fondo: #f7f9fc;
+    }
+
     body {
       font-family: sans-serif;
-      padding: 2rem;
-      max-width: 500px;
-      margin: auto;
+      background-color: var(--gris-fondo);
+      margin: 0;
+      padding: 2rem 1rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    input, button {
+
+    h2 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    input,
+    button {
       width: 100%;
-      padding: 0.7rem;
+      padding: 0.8rem;
       font-size: 1rem;
       margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
     }
-    #estado, #resultado, #acciones {
+
+    button {
+      background-color: var(--azul);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1666cc;
+    }
+
+    #estado,
+    #resultado,
+    #acciones {
       display: none;
     }
+
     #resultado {
-      background: #f0f8ff;
+      background: white;
       padding: 1rem;
       border-radius: 8px;
       margin-top: 1rem;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
+
+    #acciones {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
     #acciones button {
-      width: 48%;
-      display: inline-block;
-      margin-right: 4%;
+      flex: 1 1 45%;
     }
+
     #imagen-carton {
-      max-width: 100%;
+      width: 100%;
+      height: auto;
       margin-top: 1rem;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
     }
+
     #barra {
       width: 100%;
       background-color: #e0e0e0;
       border-radius: 5px;
-      margin-bottom: 1rem;
+      margin: 0.5rem 0;
     }
+
     #progreso {
       height: 10px;
       width: 0%;
       background-color: #4caf50;
       border-radius: 5px;
       transition: width 0.2s;
+    }
+
+    /* Responsive ajustes */
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.5rem;
+      }
+      input,
+      button {
+        font-size: 1rem;
+      }
+      #acciones button {
+        flex: 1 1 100%;
+      }
     }
   </style>
 </head>
@@ -87,19 +147,17 @@
         return;
       }
 
-      // Preparar interfaz
       document.getElementById("estado").style.display = "block";
       document.getElementById("resultado").style.display = "none";
       document.getElementById("acciones").style.display = "none";
       document.getElementById("progreso").style.width = "0%";
       document.getElementById("tiempo").innerText = "⏱️ 0.0s";
 
-      // Iniciar temporizador
       tiempoInicio = Date.now();
       tiempoInterval = setInterval(() => {
         const transcurrido = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
         document.getElementById("tiempo").innerText = `⏱️ ${transcurrido}s`;
-        const porcentaje = Math.min((transcurrido / 3) * 100, 100); // Máx. 3s
+        const porcentaje = Math.min((transcurrido / 3) * 100, 100);
         document.getElementById("progreso").style.width = `${porcentaje}%`;
       }, 100);
 
@@ -123,13 +181,12 @@
           return;
         }
 
-        // Mostrar resultado
         document.getElementById("carton-num").innerText = data.carton;
         document.getElementById("carton-link").innerText = data.link;
         document.getElementById("carton-link").href = data.link;
         document.getElementById("imagen-carton").src = data.link;
         document.getElementById("resultado").style.display = "block";
-        document.getElementById("acciones").style.display = "block";
+        document.getElementById("acciones").style.display = "flex";
 
         linkGlobal = data.link;
         numeroGlobal = numero;
