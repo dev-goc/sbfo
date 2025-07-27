@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Asignar Cartón de Bingo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.7rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    #estado, #resultado, #acciones {
+      display: none;
+    }
+    #resultado {
+      background: #f0f8ff;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    #acciones button {
+      width: 48%;
+      display: inline-block;
+      margin-right: 4%;
+    }
+    #imagen-carton {
+      max-width: 100%;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #barra {
+      width: 100%;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+    }
+    #progreso {
+      height: 10px;
+      width: 0%;
+      background-color: #4caf50;
+      border-radius: 5px;
+      transition: width 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🎟️ Asignar Cartón</h2>
+  <input id="cel" placeholder="Número de WhatsApp (ej. +573001112233)" />
+  <button id="enviar">Asignar cartón</button>
+
+  <div id="estado">
+    ⏳ Registrando número...
+    <div id="barra"><div id="progreso"></div></div>
+    <div id="tiempo">⏱️ 0.0s</div>
+  </div>
+
+  <div id="resultado">
+    <p><strong>✅ Cartón asignado:</strong> <span id="carton-num"></span></p>
+    <p><strong>📎 Link:</strong> <a id="carton-link" href="" target="_blank"></a></p>
+    <img id="imagen-carton" src="" alt="Cartón asignado" />
+  </div>
+
+  <div id="acciones">
+    <button id="whatsapp">Enviar por WhatsApp</button>
+    <button onclick="resetear()">Cerrar</button>
+  </div>
+
+  <script>
+    let linkGlobal = "";
+    let numeroGlobal = "";
+    let tiempoInterval;
+    let tiempoInicio;
+
+    document.getElementById("enviar").onclick = async () => {
+      const numero = document.getElementById("cel").value.trim();
+      if (!numero.startsWith("+57")) {
+        alert("⚠️ Ingresa el número con +57 (ej: +573001112233)");
+        return;
+      }
+
+      // Preparar interfaz
+      document.getElementById("estado").style.display = "block";
+      document.getElementById("resultado").style.display = "none";
+      document.getElementById("acciones").style.display = "none";
+      document.getElementById("progreso").style.width = "0%";
+      document.getElementById("tiempo").innerText = "⏱️ 0.0s";
+
+      // Iniciar temporizador
+      tiempoInicio = Date.now();
+      tiempoInterval = setInterval(() => {
+        const transcurrido = ((Date.now() - tiempoInicio) / 1000).toFixed(1);
+        document.getElementById("tiempo").innerText = `⏱️ ${transcurrido}s`;
+        const porcentaje = Math.min((transcurrido / 3) * 100, 100); // Máx. 3s
+        document.getElementById("progreso").style.width = `${porcentaje}%`;
+      }, 100);
+
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbwgaCe7Z18XGW2SWL8-lynkDWB9_wzL5zeIzVfde5aNNUnEtCs6-RZzvgwnG7jma2Vo/exec", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: "numero=" + encodeURIComponent(numero)
+        });
+
+        if (!res.ok) {
+          throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        clearInterval(tiempoInterval);
+        document.getElementById("estado").style.display = "none";
+
+        if (data.error) {
+          alert("⚠️ " + data.error);
+          return;
+        }
+
+        // Mostrar resultado
+        document.getElementById("carton-num").innerText = data.carton;
+        document.getElementById("carton-link").innerText = data.link;
+        document.getElementById("carton-link").href = data.link;
+        document.getElementById("imagen-carton").src = data.link;
+        document.getElementById("resultado").style.display = "block";
+        document.getElementById("acciones").style.display = "block";
+
+        linkGlobal = data.link;
+        numeroGlobal = numero;
+
+      } catch (err) {
+        clearInterval(tiempoInterval);
+        document.getElementById("estado").style.display = "none";
+        alert("❌ Error al asignar cartón:\n" + err.message);
+        console.error("Error técnico:", err);
+      }
+    };
+
+    document.getElementById("whatsapp").onclick = () => {
+      const texto = `Hola 👋, aquí está tu cartón de bingo:\n${linkGlobal}`;
+      const waUrl = `https://wa.me/${numeroGlobal.replace(/\D/g, "")}?text=${encodeURIComponent(texto)}`;
+      window.open(waUrl, "_blank");
+    };
+
+    function resetear() {
+      document.getElementById("cel").value = "";
+      document.getElementById("resultado").style.display = "none";
+      document.getElementById("acciones").style.display = "none";
+      document.getElementById("imagen-carton").src = "";
+    }
+  </script>
+</body>
+</html>
