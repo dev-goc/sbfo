@@ -114,6 +114,11 @@
 <body>
 
   <h2>🎟️ Asignar Cartón</h2>
+  
+  <select id="asistente">
+    <option disabled selected>Cargando asistentes...</option>
+  </select>
+  
   <input id="cel" placeholder="Número de WhatsApp (ej. +573001112233)" />
   <button id="enviar">Asignar cartón</button>
 
@@ -135,13 +140,37 @@
   </div>
 
   <script>
+    const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxFsuEZWYxNX-GQQlity5uv0BmpBd_i34NcpGOunRHSGEXW79KlRq4GpRO0lhBgBcHN/exec";
+
     let linkGlobal = "";
     let numeroGlobal = "";
     let tiempoInterval;
     let tiempoInicio;
 
+    async function cargarAsistentes() {
+      try {
+        const res = await fetch(`${WEBAPP_URL}?accion=asistentes`);
+        const asistentes = await res.json();
+        const select = document.getElementById("asistente");
+
+        select.innerHTML = "";
+        asistentes.forEach(nombre => {
+          const opt = document.createElement("option");
+          opt.value = nombre.toLowerCase();
+          opt.textContent = nombre;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        alert("⚠️ No se pudo cargar la lista de asistentes");
+        console.error(e);
+      }
+    }
+
     document.getElementById("enviar").onclick = async () => {
+      
       const numero = document.getElementById("cel").value.trim();
+      const asistente = document.getElementById("asistente").value;
+
       if (!numero.startsWith("+57")) {
         alert("⚠️ Ingresa el número con +57 (ej: +573001112233)");
         return;
@@ -162,18 +191,14 @@
       }, 100);
 
       try {
-        const res = await fetch(
-          "https://script.google.com/macros/s/AKfycbxFsuEZWYxNX-GQQlity5uv0BmpBd_i34NcpGOunRHSGEXW79KlRq4GpRO0lhBgBcHN/exec?numero=" + encodeURIComponent(numero)
-        );
-      
-        if (!res.ok) {
-          throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
-        }
-      
+        const res = await fetch(`${WEBAPP_URL}?numero=${encodeURIComponent(numero)}&asistente=${encodeURIComponent(asistente)}`);
+
+        if (!res.ok) throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
+
         const data = await res.json();
         clearInterval(tiempoInterval);
         document.getElementById("estado").style.display = "none";
-      
+
         if (data.error) {
           alert("⚠️ " + data.error);
           return;
