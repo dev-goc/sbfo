@@ -162,41 +162,40 @@
       }, 100);
 
       try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbwTbxgYcHoDxxDZFm8Xve4H81w50FOV9pyLEIkhcg8Q7FXVzq2cIHlpyRaQl0AmDLNP/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: "numero=" + encodeURIComponent(numero)
-        });
-
+        const res = await fetch(
+          "https://script.google.com/macros/s/AKfycbwTbxgYcHoDxxDZFm8Xve4H81w50FOV9pyLEIkhcg8Q7FXVzq2cIHlpyRaQl0AmDLNP/exec?numero=" + encodeURIComponent(numero)
+        );
+      
         if (!res.ok) {
           throw new Error(`Error HTTP ${res.status}: ${res.statusText}`);
         }
-
+      
         const data = await res.json();
         clearInterval(tiempoInterval);
         document.getElementById("estado").style.display = "none";
-
+      
         if (data.error) {
           alert("⚠️ " + data.error);
           return;
         }
-
+      
         document.getElementById("carton-num").innerText = data.carton;
         document.getElementById("carton-link").innerText = data.link;
         document.getElementById("carton-link").href = data.link;
         document.getElementById("imagen-carton").src = data.link;
         document.getElementById("resultado").style.display = "block";
         document.getElementById("acciones").style.display = "flex";
-
+      
         linkGlobal = data.link;
         numeroGlobal = numero;
-
+      
       } catch (err) {
         clearInterval(tiempoInterval);
         document.getElementById("estado").style.display = "none";
         alert("❌ Error al asignar cartón:\n" + err.message);
         console.error("Error técnico:", err);
       }
+
     };
 
     document.getElementById("whatsapp").onclick = () => {
